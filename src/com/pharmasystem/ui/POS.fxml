@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.pharmasystem.ui.POSController"
+      styleClass="root"
+      stylesheets="@pharx.css"
+      prefWidth="1280" prefHeight="750">
+
+    <!-- ── Sidebar ─────────────────────────────────────────── -->
+    <VBox styleClass="sidebar">
+        <HBox styleClass="sidebar-logo-row" alignment="CENTER_LEFT" spacing="10">
+            <StackPane styleClass="sidebar-logo-box">
+                <Label text="Rx" styleClass="sidebar-logo-symbol"/>
+            </StackPane>
+            <Label text="PhaRx" styleClass="sidebar-brand"/>
+        </HBox>
+        <Label text="NAVIGATION" styleClass="sidebar-section-label"/>
+        <Button text="  ← Dashboard"       styleClass="nav-btn"        onAction="#goBack"   maxWidth="Infinity"/>
+        <Button text="  🛒  Point of Sale"  styleClass="nav-btn-active" maxWidth="Infinity"/>
+        <Region VBox.vgrow="ALWAYS"/>
+    </VBox>
+
+    <!-- ── Main content ───────────────────────────────────── -->
+    <HBox HBox.hgrow="ALWAYS" spacing="20" styleClass="page-content">
+
+        <!-- LEFT PANEL -->
+        <VBox HBox.hgrow="ALWAYS" spacing="14">
+
+            <VBox styleClass="page-header" spacing="4">
+                <Label text="Point of Sale" styleClass="page-title"/>
+                <Label text="Browse or search medicines, then add to cart" styleClass="page-subtitle"/>
+            </VBox>
+
+            <!-- Search bar -->
+            <VBox styleClass="card" spacing="0">
+                <VBox style="-fx-padding: 14 20 14 20;" spacing="8">
+                    <Label text="SEARCH MEDICINE" styleClass="field-label"/>
+                    <AnchorPane fx:id="searchAnchor" minHeight="42" prefHeight="42">
+                        <TextField fx:id="searchField"
+                                   promptText="Type to filter the catalogue…"
+                                   styleClass="search-field"
+                                   onKeyReleased="#onSearchKeyReleased"
+                                   AnchorPane.leftAnchor="0"
+                                   AnchorPane.rightAnchor="0"
+                                   AnchorPane.topAnchor="0"/>
+                        <VBox fx:id="searchDropdown"
+                              styleClass="search-popup"
+                              visible="false" managed="false"
+                              maxHeight="220"
+                              AnchorPane.leftAnchor="0"
+                              AnchorPane.rightAnchor="0"
+                              AnchorPane.topAnchor="48">
+                            <ListView fx:id="searchResultsList"
+                                      styleClass="search-list"
+                                      prefHeight="180"/>
+                        </VBox>
+                    </AnchorPane>
+                </VBox>
+            </VBox>
+
+            <!-- Medicine catalogue -->
+            <VBox styleClass="card" VBox.vgrow="ALWAYS" spacing="0">
+                <HBox alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-padding: 12 20 10 20;
+                             -fx-border-color: transparent transparent #F1F5F9 transparent;
+                             -fx-border-width: 0 0 1 0;">
+                    <Label text="ALL MEDICINES" styleClass="field-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="catalogueCountLabel" text="" styleClass="label-muted"/>
+                </HBox>
+                <ScrollPane fx:id="catalogueScroll"
+                            VBox.vgrow="ALWAYS"
+                            fitToWidth="true"
+                            hbarPolicy="NEVER"
+                            style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-width: 0;">
+                    <FlowPane fx:id="medicineGrid"
+                              hgap="12" vgap="12"
+                              style="-fx-padding: 14 14 14 14; -fx-background-color: transparent;"/>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Selected medicine card -->
+            <VBox fx:id="selectedMedicineCard" styleClass="card" visible="false" managed="false" spacing="0">
+                <HBox style="-fx-padding: 14 20 12 20;
+                             -fx-border-color: transparent transparent #F1F5F9 transparent;
+                             -fx-border-width: 0 0 1 0;"
+                      alignment="CENTER_LEFT" spacing="12">
+                    <Label text="SELECTED MEDICINE" styleClass="field-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="prescriptionBadge" text="Rx Required"
+                           styleClass="badge-amber" visible="false" managed="false"/>
+                </HBox>
+                <VBox style="-fx-padding: 14 20 18 20;" spacing="12">
+                    <HBox alignment="CENTER_LEFT" spacing="16">
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label fx:id="selectedName"  text="—" styleClass="card-title"/>
+                            <Label fx:id="selectedStock" text="Stock: —" styleClass="label-muted"/>
+                        </VBox>
+                        <Label fx:id="selectedPrice" text="₱0.00" styleClass="card-value"/>
+                    </HBox>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <VBox spacing="4">
+                            <Label text="QUANTITY" styleClass="field-label"/>
+                            <TextField fx:id="quantityField"
+                                       promptText="Enter quantity"
+                                       styleClass="form-field"
+                                       prefWidth="160"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Add to Cart"
+                                styleClass="btn-primary"
+                                onAction="#addToCart"
+                                style="-fx-padding: 10 24 10 24;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+        </VBox>
+
+        <!-- RIGHT PANEL: Cart -->
+        <VBox prefWidth="430" minWidth="380" spacing="14">
+
+            <VBox styleClass="page-header" spacing="4">
+                <Label text="Cart" styleClass="page-title"/>
+                <Label fx:id="cartCountLabel" text="0 items" styleClass="page-subtitle"/>
+            </VBox>
+
+            <VBox styleClass="card" VBox.vgrow="ALWAYS" spacing="0">
+                <TableView fx:id="cartTable"
+                           VBox.vgrow="ALWAYS"
+                           styleClass="table-view"
+                           style="-fx-background-color: transparent; -fx-padding: 0;">
+                    <placeholder>
+                        <Label text="No items in cart" styleClass="label-muted"/>
+                    </placeholder>
+                    <columns>
+                        <TableColumn fx:id="cartNameCol"   text="MEDICINE"  minWidth="110"/>
+                        <TableColumn fx:id="cartQtyCol"    text="QTY"       prefWidth="50"  minWidth="40"  maxWidth="60"/>
+                        <TableColumn fx:id="cartTotalCol"  text="TOTAL"     prefWidth="90"  minWidth="70"  maxWidth="110"/>
+                        <TableColumn fx:id="cartActionCol" text=""           prefWidth="115" minWidth="115" maxWidth="125"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox styleClass="total-bar">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="TOTAL AMOUNT" styleClass="total-bar-label"/>
+                    <Label fx:id="totalLabel" text="₱0.00" styleClass="total-bar-value"/>
+                </HBox>
+            </VBox>
+
+            <Button text="Process Sale  →"
+                    styleClass="btn-primary"
+                    onAction="#processSale"
+                    maxWidth="Infinity"
+                    style="-fx-pref-height: 46px; -fx-font-size: 14px;"/>
+        </VBox>
+
+    </HBox>
+</HBox>
